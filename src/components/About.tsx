@@ -1,12 +1,38 @@
+import { useState, useEffect } from 'react';
 import { Users, Target, Heart, Globe } from 'lucide-react';
+import { supabase } from '../lib/supabase';
+
+interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  description: string;
+  display_order: number;
+}
 
 export default function About() {
-  const team = [
-    { name: 'Rao Chalasani', role: 'Founder', description: 'NRI, US-based' },
-    { name: 'Wg. Commander Krishna Rao Yarlagadda', role: 'Founder', description: 'Retired IAF, Nimmakuru village' },
-    { name: 'Rajani Karuturi', role: 'CEO', description: 'US-based' },
-    { name: 'Hemanth Kumar', role: 'Plant Manager', description: 'Engineer' },
-  ];
+  const [team, setTeam] = useState<TeamMember[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchTeam();
+  }, []);
+
+  const fetchTeam = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('leadership_team')
+        .select('*')
+        .order('display_order', { ascending: true });
+
+      if (error) throw error;
+      setTeam(data || []);
+    } catch (error) {
+      console.error('Error fetching leadership team:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <section id="about" className="py-20 bg-white">
@@ -40,20 +66,24 @@ export default function About() {
 
           <div className="mb-16">
             <h3 className="text-3xl font-bold text-[#2d5016] mb-8 text-center">Our Leadership Team</h3>
-            <div className="grid md:grid-cols-2 gap-6">
-              {team.map((member, index) => (
-                <div key={index} className="bg-white border-2 border-[#2d5016] p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
-                  <div className="flex items-start space-x-4">
-                    <Users className="w-12 h-12 text-[#f4d03f] flex-shrink-0" />
-                    <div>
-                      <h4 className="text-xl font-bold text-[#2d5016] mb-1">{member.name}</h4>
-                      <p className="text-[#f4d03f] font-semibold mb-2">{member.role}</p>
-                      <p className="text-gray-600">{member.description}</p>
+            {isLoading ? (
+              <div className="text-center py-8 text-gray-600">Loading team members...</div>
+            ) : (
+              <div className="grid md:grid-cols-2 gap-6">
+                {team.map((member) => (
+                  <div key={member.id} className="bg-white border-2 border-[#2d5016] p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+                    <div className="flex items-start space-x-4">
+                      <Users className="w-12 h-12 text-[#f4d03f] flex-shrink-0" />
+                      <div>
+                        <h4 className="text-xl font-bold text-[#2d5016] mb-1">{member.name}</h4>
+                        <p className="text-[#f4d03f] font-semibold mb-2">{member.role}</p>
+                        <p className="text-gray-600">{member.description}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">

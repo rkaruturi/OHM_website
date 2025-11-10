@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { LogOut, Package, MessageSquare, HelpCircle, Wrench } from 'lucide-react';
+import { LogOut, Package, MessageSquare, HelpCircle, Wrench, Users } from 'lucide-react';
 import ProductsManager from '../components/admin/ProductsManager';
 import TestimonialsManager from '../components/admin/TestimonialsManager';
 import FAQsManager from '../components/admin/FAQsManager';
 import ServicesManager from '../components/admin/ServicesManager';
+import LeadershipManager from '../components/admin/LeadershipManager';
 
-type Tab = 'products' | 'testimonials' | 'faqs' | 'services';
+type Tab = 'products' | 'testimonials' | 'faqs' | 'services' | 'leadership';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<Tab>('products');
@@ -21,9 +22,10 @@ export default function AdminDashboard() {
 
   const tabs = [
     { id: 'products' as Tab, label: 'Products', icon: Package },
+    { id: 'services' as Tab, label: 'Services', icon: Wrench },
     { id: 'testimonials' as Tab, label: 'Testimonials', icon: MessageSquare },
     { id: 'faqs' as Tab, label: 'FAQs', icon: HelpCircle },
-    { id: 'services' as Tab, label: 'Services', icon: Wrench },
+    { id: 'leadership' as Tab, label: 'Leadership', icon: Users },
   ];
 
   return (
@@ -72,9 +74,10 @@ export default function AdminDashboard() {
 
           <div className="p-6">
             {activeTab === 'products' && <ProductsManager />}
+            {activeTab === 'services' && <ServicesManager />}
             {activeTab === 'testimonials' && <TestimonialsManager />}
             {activeTab === 'faqs' && <FAQsManager />}
-            {activeTab === 'services' && <ServicesManager />}
+            {activeTab === 'leadership' && <LeadershipManager />}
           </div>
         </div>
       </div>
