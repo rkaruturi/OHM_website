@@ -18,16 +18,20 @@ export default function AdminLogin({ onLoginSuccess }: AdminLoginProps) {
     setError('');
     setIsLoading(true);
 
-    setTimeout(() => {
-      const success = login(email, password);
+    try {
+      const result = await login(email, password);
 
-      if (success) {
+      if (result.success) {
         onLoginSuccess();
       } else {
-        setError('Invalid email or password');
+        setError(result.error || 'Invalid email or password');
       }
+    } catch (err) {
+      setError('An unexpected error occurred');
+      console.error('Login error:', err);
+    } finally {
       setIsLoading(false);
-    }, 500);
+    }
   };
 
   return (

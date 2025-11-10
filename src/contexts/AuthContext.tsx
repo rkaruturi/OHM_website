@@ -1,54 +1,77 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { supabase } from '../lib/supabase';
+import type { User, Session } from '@supabase/supabase-js';
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  login: (email: string, password: string) => boolean;
-  logout: () => void;
+  user: User | null;
+  session: Session | null;
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  logout: () => Promise<void>;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const authStatus = sessionStorage.getItem('adminAuth');
-    const authTime = sessionStorage.getItem('adminAuthTime');
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setIsAuthenticated(!!session);
+      setLoading(false);
+    });
 
-    if (authStatus === 'true' && authTime) {
-      const elapsed = Date.now() - parseInt(authTime);
-      const fourHours = 4 * 60 * 60 * 1000;
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setIsAuthenticated(!!session);
+      setLoading(false);
+    });
 
-      if (elapsed < fourHours) {
-        setIsAuthenticated(true);
-      } else {
-        sessionStorage.removeItem('adminAuth');
-        sessionStorage.removeItem('adminAuthTime');
-      }
-    }
+    return () => subscription.unsubscribe();
   }, []);
 
-  const login = (email: string, password: string): boolean => {
-    const adminEmail = import.meta.env.VITE_ADMIN_EMAIL;
-    const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD;
+  const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    if (email === adminEmail && password === adminPassword) {
-      setIsAuthenticated(true);
-      sessionStorage.setItem('adminAuth', 'true');
-      sessionStorage.setItem('adminAuthTime', Date.now().toString());
-      return true;
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      if (data.session) {
+        setSession(data.session);
+        setUser(data.user);
+        setIsAuthenticated(true);
+        return { success: true };
+      }
+
+      return { success: false, error: 'No session returned' };
+    } catch (error) {
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error occurred' };
     }
-    return false;
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await supabase.auth.signOut();
     setIsAuthenticated(false);
-    sessionStorage.removeItem('adminAuth');
-    sessionStorage.removeItem('adminAuthTime');
+    setUser(null);
+    setSession(null);
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, session, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

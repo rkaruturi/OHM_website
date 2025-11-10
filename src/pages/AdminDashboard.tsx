@@ -13,9 +13,9 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<Tab>('products');
   const { logout } = useAuth();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (confirm('Are you sure you want to log out?')) {
-      logout();
+      await logout();
       window.location.href = '/';
     }
   };
