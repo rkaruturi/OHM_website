@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
@@ -20,11 +20,7 @@ export default function FAQ() {
   const [faqSections, setFaqSections] = useState<FAQSection[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    fetchFAQs();
-  }, []);
-
-  const fetchFAQs = async () => {
+  const fetchFAQs = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('faqs')
@@ -40,7 +36,11 @@ export default function FAQ() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchFAQs();
+  }, [fetchFAQs]);
 
   const groupFAQsBySection = (faqs: FAQ[]): FAQSection[] => {
     const sections: Record<string, FAQ[]> = {};

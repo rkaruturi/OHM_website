@@ -23,7 +23,7 @@ export default function Hero() {
           </p>
 
           <p className="text-xl text-gray-700 mb-8 max-w-3xl mx-auto leading-relaxed">
-            Vasudhaika Kutumbam - World as One Family
+            In Harmony with Soil, in Service to Life
           </p>
 
           <p className="text-lg text-gray-600 mb-12 max-w-4xl mx-auto">

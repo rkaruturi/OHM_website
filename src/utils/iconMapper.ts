@@ -2,7 +2,7 @@ import * as LucideIcons from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
 
 export const getIconComponent = (iconName: string): LucideIcon => {
-  const icons = LucideIcons as Record<string, LucideIcon>;
+  const icons = LucideIcons as unknown as Record<string, LucideIcon>;
   return icons[iconName] || LucideIcons.Circle;
 };
 

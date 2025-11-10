@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { LogOut, Package, MessageSquare, HelpCircle, Wrench, Users } from 'lucide-react';
 import ProductsManager from '../components/admin/ProductsManager';
 import TestimonialsManager from '../components/admin/TestimonialsManager';
