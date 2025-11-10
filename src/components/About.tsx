@@ -113,8 +113,8 @@ export default function About() {
           </div>
 
           <div className="mt-12 text-center bg-gradient-to-r from-[#2d5016] to-[#3d6020] text-white p-8 rounded-2xl shadow-lg">
-            <p className="text-2xl font-semibold italic mb-2">Vasudhaika Kutumbam</p>
-            <p className="text-xl">World as One Family</p>
+            <p className="text-2xl font-semibold italic mb-2">In Harmony with Soil</p>
+            <p className="text-xl">in Service to Life</p>
           </div>
         </div>
       </div>
