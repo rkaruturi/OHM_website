@@ -19,7 +19,7 @@ export default function Footer() {
                 solutions. 18 years of experience serving 12,000 acres of farmland.
               </p>
               <p className="text-[#f4d03f] font-semibold italic">
-                Vasudhaika Kutumbam - World as One Family
+                In Harmony with Soil, in Service to Life
               </p>
             </div>
 
