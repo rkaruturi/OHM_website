@@ -22,6 +22,12 @@ export default function FAQ() {
 
   const fetchFAQs = useCallback(async () => {
     try {
+      if (!supabase) {
+        setFaqSections([]);
+        setIsLoading(false);
+        return;
+      }
+
       const { data, error } = await supabase
         .from('faqs')
         .select('*')

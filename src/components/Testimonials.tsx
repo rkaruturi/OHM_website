@@ -30,6 +30,12 @@ export default function Testimonials() {
 
   const fetchTestimonials = async () => {
     try {
+      if (!supabase) {
+        setTestimonials([]);
+        setIsLoading(false);
+        return;
+      }
+
       const { data, error } = await supabase
         .from('testimonials')
         .select('*')
