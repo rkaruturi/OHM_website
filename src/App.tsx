@@ -14,6 +14,7 @@ import Footer from './components/Footer';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
+import { initializeAdminUser } from './utils/initAdmin';
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
@@ -25,6 +26,10 @@ function App() {
 
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  useEffect(() => {
+    initializeAdminUser();
   }, []);
 
   const isAdminRoute = currentPath === '/admin';
