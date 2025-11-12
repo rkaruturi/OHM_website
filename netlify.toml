@@ -1,9 +1,10 @@
 [build]
-  command = "npm run build"
-  publish = "dist"
+     command = "npm run build"
+     publish = "dist"
 
-[build.environment]
-  NODE_VERSION = "18"
+   [build.environment]
+     SECRETS_SCAN_OMIT_KEYS = "VITE_SUPABASE_ANON_KEY,VITE_SUPABASE_URL,VITE_ADMIN_EMAIL"
+     SECRETS_SCAN_OMIT_PATHS = "supabase/functions/**"
 
 # Secrets Scanning Configuration
 # Supabase anon keys and URLs are designed to be public and used in browser code
