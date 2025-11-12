@@ -1,5 +1,3 @@
-import { supabase } from '../lib/supabase';
-
 const ADMIN_INITIALIZED_KEY = 'admin_user_initialized';
 
 export async function initializeAdminUser(): Promise<boolean> {
@@ -12,42 +10,23 @@ export async function initializeAdminUser(): Promise<boolean> {
     return true;
   }
 
-  const adminEmail = import.meta.env.VITE_ADMIN_EMAIL;
-  const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD;
-
-  if (!adminEmail || !adminPassword) {
-    console.warn('Admin credentials not configured in environment variables');
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  if (!supabaseUrl) {
+    console.warn('Supabase URL not configured');
     return false;
   }
 
   try {
-    const { data: existingUser } = await supabase.auth.signInWithPassword({
-      email: adminEmail,
-      password: adminPassword,
+    const response = await fetch(`${supabaseUrl}/functions/v1/init-admin`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
 
-    if (existingUser?.user) {
-      localStorage.setItem(ADMIN_INITIALIZED_KEY, 'true');
-      await supabase.auth.signOut();
-      return true;
-    }
-  } catch (error) {
-    console.log('Admin user does not exist, attempting to create...');
-  }
+    const result = await response.json();
 
-  try {
-    const { data, error } = await supabase.rpc('create_admin_user', {
-      admin_email: adminEmail,
-      admin_password: adminPassword,
-    });
-
-    if (error) {
-      console.error('Error creating admin user:', error);
-      return false;
-    }
-
-    if (data) {
-      console.log('Admin user created successfully');
+    if (result.success) {
       localStorage.setItem(ADMIN_INITIALIZED_KEY, 'true');
       return true;
     }
