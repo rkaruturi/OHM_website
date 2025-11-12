@@ -1,0 +1,28 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "18"
+
+# Secrets Scanning Configuration
+# Supabase anon keys and URLs are designed to be public and used in browser code
+# Security is handled through Row Level Security (RLS) policies in the database
+[context.production.environment]
+  SECRETS_SCAN_ENABLED = "true"
+  # Omit the Supabase public credentials from secrets scanning
+  # These are intentionally public and safe to expose in client-side code
+  SECRETS_SCAN_OMIT_KEYS = "VITE_SUPABASE_ANON_KEY,VITE_SUPABASE_URL"
+  # Exclude server-side Supabase functions directory from scanning
+  # This directory is not part of the client build output
+  SECRETS_SCAN_OMIT_PATHS = "supabase/functions/**"
+
+[context.deploy-preview.environment]
+  SECRETS_SCAN_ENABLED = "true"
+  SECRETS_SCAN_OMIT_KEYS = "VITE_SUPABASE_ANON_KEY,VITE_SUPABASE_URL"
+  SECRETS_SCAN_OMIT_PATHS = "supabase/functions/**"
+
+[context.branch-deploy.environment]
+  SECRETS_SCAN_ENABLED = "true"
+  SECRETS_SCAN_OMIT_KEYS = "VITE_SUPABASE_ANON_KEY,VITE_SUPABASE_URL"
+  SECRETS_SCAN_OMIT_PATHS = "supabase/functions/**"

@@ -30,8 +30,24 @@ Deno.serve(async (req: Request) => {
       },
     });
 
-    const adminEmail = Deno.env.get("ADMIN_EMAIL") || "admin@ohmorganics.com";
-    const adminPassword = Deno.env.get("ADMIN_PASSWORD") || "ChangeMe123!";
+    const adminEmail = Deno.env.get("ADMIN_EMAIL");
+    const adminPassword = Deno.env.get("ADMIN_PASSWORD");
+
+    if (!adminEmail || !adminPassword) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "Admin credentials not configured. Please set ADMIN_EMAIL and ADMIN_PASSWORD environment variables."
+        }),
+        {
+          status: 500,
+          headers: {
+            ...corsHeaders,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
 
     const { data: existingUser } = await supabase.auth.admin.listUsers();
     const adminExists = existingUser?.users?.some((u) => u.email === adminEmail);

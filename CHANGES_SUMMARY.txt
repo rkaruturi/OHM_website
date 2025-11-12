@@ -1,0 +1,79 @@
+================================================================================
+NETLIFY SECRETS SCANNING FIX - CHANGES SUMMARY
+================================================================================
+
+PROBLEM RESOLVED:
+Netlify's secrets scanner was blocking deployment because it detected Supabase
+credentials in the build output. This is now fixed.
+
+FILES CREATED:
+--------------
+1. netlify.toml
+   - Netlify configuration file
+   - Configures secrets scanning to allow Supabase public credentials
+   - Sets SECRETS_SCAN_OMIT_KEYS for VITE_SUPABASE_ANON_KEY and VITE_SUPABASE_URL
+   - Sets SECRETS_SCAN_OMIT_PATHS to exclude supabase/functions/**
+
+2. DEPLOYMENT.md
+   - Comprehensive deployment documentation
+   - Explains why Supabase credentials are safe to be public
+   - Security best practices and troubleshooting guide
+
+3. NETLIFY_SETUP.md
+   - Quick start guide for Netlify deployment
+   - Step-by-step instructions
+   - Environment variable configuration
+
+FILES MODIFIED:
+--------------
+1. .gitignore
+   - Added .netlify directory
+   - Added .env.local and .env.production patterns
+
+2. supabase/functions/init-admin/index.ts
+   - Removed hardcoded default credentials (admin@ohmorganics.com)
+   - Now requires ADMIN_EMAIL and ADMIN_PASSWORD environment variables
+   - Added proper error handling for missing credentials
+
+BUILD STATUS:
+------------
+✓ npm run build completes successfully
+✓ No secrets scanning errors locally
+✓ Build output: dist/assets/index-B0f08RL_.js (1,050.57 kB)
+
+IMPORTANT SECURITY NOTES:
+------------------------
+✓ Supabase ANON key being in JavaScript is NORMAL and SAFE
+✓ This is how all Supabase applications work
+✓ Security is enforced through Row Level Security (RLS) policies
+✓ The anon key has limited permissions by design
+
+NEXT STEPS FOR DEPLOYMENT:
+-------------------------
+1. Commit all changes to git:
+   git add .
+   git commit -m "Configure Netlify deployment with Supabase"
+   git push
+
+2. In Netlify dashboard, add environment variables:
+   - VITE_SUPABASE_URL (required)
+   - VITE_SUPABASE_ANON_KEY (required)
+   - ADMIN_EMAIL (optional, for admin initialization)
+   - ADMIN_PASSWORD (optional, for admin initialization)
+
+3. Deploy - the secrets scanner will now allow the build!
+
+WHAT CHANGED IN NETLIFY CONFIGURATION:
+-------------------------------------
+The netlify.toml tells Netlify's secrets scanner:
+- "VITE_SUPABASE_ANON_KEY and VITE_SUPABASE_URL are intentionally public"
+- "Don't scan the supabase/functions directory (it's not deployed)"
+- "These values being in the client bundle is expected and secure"
+
+FOR MORE INFORMATION:
+--------------------
+- Read DEPLOYMENT.md for detailed deployment documentation
+- Read NETLIFY_SETUP.md for quick start guide
+- Supabase security: https://supabase.com/docs/guides/auth/row-level-security
+
+================================================================================
