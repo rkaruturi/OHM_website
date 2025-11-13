@@ -20,6 +20,11 @@ export default function About() {
 
   const fetchTeam = async () => {
     try {
+      if (!supabase) {
+        setTeam([]);
+        return;
+      }
+
       const { data, error } = await supabase
         .from('leadership_team')
         .select('*')

@@ -34,6 +34,12 @@ export default function Products() {
 
   const fetchProducts = async () => {
     try {
+      if (!supabase) {
+        setProducts([]);
+        setIsLoadingProducts(false);
+        return;
+      }
+
       const { data, error } = await supabase
         .from('products')
         .select('*')
@@ -50,6 +56,12 @@ export default function Products() {
 
   const fetchServices = async () => {
     try {
+      if (!supabase) {
+        setServices([]);
+        setIsLoadingServices(false);
+        return;
+      }
+
       const { data, error } = await supabase
         .from('services')
         .select('*')
